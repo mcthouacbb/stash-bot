@@ -40,7 +40,7 @@ f64 lerp(f64 lo, f64 hi, f64 rate) {
 
 void tuner_config_set_default_values(TunerConfig *tuner_config) {
     *tuner_config = (TunerConfig) {
-        .threads = 1,
+        .threads = 4,
         .iterations = 1000,
         .display_every = 25,
         .batch_size = 16384,

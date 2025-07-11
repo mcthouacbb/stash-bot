@@ -25,65 +25,65 @@
 // clang-format off
 
 // Miscellanous bonus for Pawn structures
-const Scorepair BackwardPenalty = SPAIR(-20, -26);
-const Scorepair DoubledPenalty  = SPAIR(-14, -46);
-const Scorepair IsolatedPenalty = SPAIR( -5, -11);
+const Scorepair BackwardPenalty = SPAIR(-21, -25);
+const Scorepair DoubledPenalty  = SPAIR(-15, -45);
+const Scorepair IsolatedPenalty = SPAIR( -4, -11);
 
 // Rank-based bonus for passed Pawns
 const Scorepair PassedBonus[8] = {
     0,
-    SPAIR(-10,   7),
-    SPAIR(-14,  15),
-    SPAIR(-27,  41),
-    SPAIR( 16,  99),
-    SPAIR( 67, 189),
-    SPAIR(106, 351),
+    SPAIR(-11,   8),
+    SPAIR(-15,  16),
+    SPAIR(-26,  57),
+    SPAIR( 10, 121),
+    SPAIR( 76, 204),
+    SPAIR(111, 360),
     0
 };
 
 // Passed Pawn eval terms
 const Scorepair PassedOurKingDistance[24] = {
-    SPAIR(  21,   96), SPAIR(  32,    6), SPAIR( -28,  -87),
-    SPAIR(   0,    0), SPAIR(   0,    0), SPAIR(   0,    0),
-    SPAIR(  28,   72), SPAIR(  35,   17), SPAIR(  16,  -38),
-    SPAIR( -59,  -61), SPAIR(   0,    0), SPAIR(   0,    0),
-    SPAIR(   5,   70), SPAIR( -29,   36), SPAIR( -13,  -12),
-    SPAIR(  -5,  -43), SPAIR(  40,  -53), SPAIR(   0,    0),
-    SPAIR( -40,   55), SPAIR( -27,   31), SPAIR( -12,  -10),
-    SPAIR(   0,  -14), SPAIR(  28,  -23), SPAIR(  43,  -28)
+    SPAIR(  22,  104), SPAIR(  35,   15), SPAIR( -28, -114),
+    SPAIR(   0,    0), SPAIR(   0,    0), SPAIR(   1,   22),
+    SPAIR(  29,   92), SPAIR(  39,   12), SPAIR(  21,  -36),
+    SPAIR( -61,  -85), SPAIR(   0,    0), SPAIR(   2,   39),
+    SPAIR(   6,   90), SPAIR( -21,   25), SPAIR(  -8,  -11),
+    SPAIR(   2,  -48), SPAIR(  12,  -75), SPAIR(   1,   49),
+    SPAIR( -41,   68), SPAIR( -29,   30), SPAIR( -15,   -2),
+    SPAIR(   0,  -37), SPAIR(  31,  -38), SPAIR(  47,  -41)
 };
 
 const Scorepair PassedTheirKingDistance[24] = {
-    SPAIR(  11, -152), SPAIR(   7,    4), SPAIR(   4,  163),
-    SPAIR(   0,    0), SPAIR(   0,    0), SPAIR(   0,    0),
-    SPAIR( -24, -119), SPAIR(  26,  -46), SPAIR(  10,   44),
-    SPAIR(   6,  115), SPAIR(   0,    0), SPAIR(   0,    0),
-    SPAIR( -13,  -78), SPAIR(  30,  -35), SPAIR(  15,  -10),
-    SPAIR(  -4,   46), SPAIR( -32,   77), SPAIR(   0,    0),
-    SPAIR( -43,  -35), SPAIR(  -9,   -8), SPAIR(  17,  -10),
-    SPAIR(  29,   -6), SPAIR(  -4,   36), SPAIR(  -3,   35)
+    SPAIR(  15, -138), SPAIR(   6,   -6), SPAIR(   2,  177),
+    SPAIR(   0,    0), SPAIR(   0,    0), SPAIR( -19,  -88),
+    SPAIR(   5,  -74), SPAIR(  38,  -23), SPAIR(   3,   58),
+    SPAIR(  -1,  135), SPAIR(   0,    0), SPAIR(  -4,  -71),
+    SPAIR(   3,  -44), SPAIR(  13,  -21), SPAIR(  -1,   18),
+    SPAIR( -10,   56), SPAIR( -11,   84), SPAIR(  -4,  -32),
+    SPAIR( -38,  -13), SPAIR(  17,  -13), SPAIR(  25,   -7),
+    SPAIR(   5,   20), SPAIR(  -7,   38), SPAIR(  -9,   37)
 };
 
 // Rank-based bonus for phalanx structures
 const Scorepair PhalanxBonus[8] = {
     0,
-    SPAIR(  6,  -2),
+    SPAIR(  5,  -2),
     SPAIR( 18,  11),
-    SPAIR( 21,  28),
-    SPAIR( 42,  70),
-    SPAIR(177, 280),
-    SPAIR(183, 272),
+    SPAIR( 21,  29),
+    SPAIR( 40,  77),
+    SPAIR(178, 289),
+    SPAIR(183, 276),
     0
 };
 
 // Rank-based bonus for defenders
 const Scorepair DefenderBonus[8] = {
     0,
-    SPAIR( 18,  22),
+    SPAIR( 18,  21),
     SPAIR( 14,  22),
     SPAIR( 23,  34),
-    SPAIR( 61,  97),
-    SPAIR(186, 173),
+    SPAIR( 62,  96),
+    SPAIR(187, 171),
     0,
     0
 };
@@ -209,8 +209,8 @@ static Scorepair evaluate_passed_pos(const KingPawnEntry *kpe, const Board *boar
 
         // Give a bonus/penalty based on how close our King and their King are from the pawn.
         if (queening_distance <= 4) {
-            const u8 our_distance = square_distance(our_king, sq);
-            const u8 their_distance = square_distance(their_king, sq);
+            const u8 our_distance = square_distance(our_king, sq + pawn_direction(us));
+            const u8 their_distance = square_distance(their_king, sq + pawn_direction(us));
             const u8 our_index = distance_to_pkd_index(queening_distance, our_distance);
             const u8 their_index = distance_to_pkd_index(queening_distance, their_distance);
 

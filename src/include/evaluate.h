@@ -106,7 +106,6 @@ typedef struct {
     Bitboard attacked[COLOR_NB];
     Bitboard attacked2[COLOR_NB];
     Bitboard attacked_by[COLOR_NB][PIECETYPE_NB];
-    i32 safety_attackers[COLOR_NB];
     i32 safety_attacks[COLOR_NB];
     Scorepair safety_value[COLOR_NB];
     i32 position_closed;

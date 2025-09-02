@@ -627,7 +627,9 @@ Score search(
 
     // Futility Pruning. If our eval is quite good and depth is low, we just assume that we won't
     // fall far behind in the next plies, and we return the eval.
-    if (!pv_node && depth <= 7 && eval - 86 * depth + 79 * improving >= beta && eval < VICTORY) {
+    if (!pv_node && depth <= 7
+        && eval - 86 * depth + 79 * improving - (ss - 1)->hist_score / 400 >= beta && eval >= beta
+        && eval < VICTORY) {
         return eval;
     }
 
@@ -646,6 +648,7 @@ Score search(
 
         ss->current_move = NULL_MOVE;
         ss->piece_history = NULL;
+        ss->hist_score = 0;
 
         board_do_null_move(board, &stack);
         prefetch(tt_entry_at(&worker->pool->tt, board->stack->board_key));
@@ -714,6 +717,7 @@ Score search(
             ss->piece_history =
                 &worker->continuation_hist
                      ->piece_history[board_piece_on(board, move_from(currmove))][move_to(currmove)];
+            ss->hist_score = 0;
 
             board_do_move(board, currmove, &stack);
             prefetch(tt_entry_at(&worker->pool->tt, board->stack->board_key));
@@ -890,6 +894,7 @@ main_loop:
         ss->current_move = currmove;
         ss->piece_history =
             &worker->continuation_hist->piece_history[moved_piece][move_to(currmove)];
+        ss->hist_score = hist_score;
 
         board_do_move_gc(board, currmove, &stack, gives_check);
         prefetch(tt_entry_at(&worker->pool->tt, board->stack->board_key));
@@ -1207,6 +1212,8 @@ Score qsearch(bool pv_node, Board *board, Score alpha, Score beta, Searchstack *
         ss->piece_history =
             &worker->continuation_hist
                  ->piece_history[board_moved_piece(board, currmove)][move_to(currmove)];
+        // ss->hist_score is unused in qsearch
+        ss->hist_score = 0;
 
         if (pv_node) {
             pv_line_init(&ss->pv);

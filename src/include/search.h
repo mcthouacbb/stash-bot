@@ -33,6 +33,7 @@ typedef struct {
     Move current_move;
     PvLine pv;
     PieceHistory *piece_history;
+    i32 hist_score;
 } Searchstack;
 
 void searchstack_init(Searchstack *ss);
